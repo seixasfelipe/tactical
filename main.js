@@ -9,6 +9,12 @@ var TACTICAL = (function(o) {
         HEIGHT: 0, 
         // ROWS: 0, 
         // COLS: 0,
+        CENTER_X: function() {
+            return this.WIDTH / 2;
+        },
+        CENTER_Y: function() {
+            return this.HEIGHT / 2;
+        },
         TILE_SIZE: 0,
         HALF_PIXEL: 0.5,
 
@@ -112,30 +118,78 @@ var TACTICAL = (function(o) {
 
             // draw vertical lines
             var i = 0,
-                p = { x: 0, y: 0 }
-                rows = parseInt(this.HEIGHT / this.TILE_SIZE, 10) * 2,
-                cols = parseInt(this.WIDTH / this.TILE_SIZE, 10) * 2
+                p = { x: 0, y: 0 },
+                // rows = parseInt(this.HEIGHT / this.TILE_SIZE, 10) * 2,
+                // cols = parseInt(this.WIDTH / this.TILE_SIZE, 10) * 2
+                rows = 3,
+                cols = 3
 
-            while(i <= cols) {
+            // this.ctx.moveTo(this.CENTER_X(), 0)
+            // this.ctx.lineTo(this.CENTER_X(), this.HEIGHT)
 
-                p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE + this.HALF_PIXEL, y: 0 })
-                this.ctx.moveTo(p.x, p.y)
+            // this.ctx.moveTo(0, this.CENTER_Y())
+            // this.ctx.lineTo(this.WIDTH, this.CENTER_Y())
 
-                p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE + this.HALF_PIXEL, y: rows * this.TILE_SIZE })
-                this.ctx.lineTo(p.x, p.y)
+
+
+            // this.ctx.fillStyle = this.highlightedTile.fillStyle
+            // this.ctx.strokeStyle = this.highlightedTile.strokeStyle
+
+            // var x = this.CENTER_X() - this.TILE_SIZE + this.HALF_PIXEL,
+            //     y = this.CENTER_Y()
+
+            // this.ctx.fill()
+
+            // this.ctx.beginPath()
+            // this.ctx.moveTo(x, y)
+            // this.ctx.lineTo(x + this.TILE_SIZE, y - this.TILE_SIZE / 2)
+            // this.ctx.lineTo(x + this.TILE_SIZE * 2, y)
+            // this.ctx.lineTo(x + this.TILE_SIZE, y + this.TILE_SIZE / 2)
+            // this.ctx.closePath() // draws last line of the tile
+            // this.ctx.stroke()
+
+
+            i = 0
+            while(i <= this.WIDTH / this.TILE_SIZE)
+            {
+                this.ctx.moveTo(i * this.TILE_SIZE, 0)
+                this.ctx.lineTo(i * this.TILE_SIZE, this.HEIGHT)
 
                 i += 1
-
             }
+
+            i = 0
+            while(i <= this.HEIGHT / this.TILE_SIZE)
+            {
+                this.ctx.moveTo(0, i * this.TILE_SIZE)
+                this.ctx.lineTo(this.WIDTH, i * this.TILE_SIZE)
+                
+                i += 1
+            }
+
+
+
+
+            // while(i <= cols) {
+
+            //     p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE + this.HALF_PIXEL, y: 0 })
+            //     this.ctx.moveTo(p.x, p.y)
+
+            //     p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE + this.HALF_PIXEL, y: rows * this.TILE_SIZE })
+            //     this.ctx.lineTo(p.x, p.y)
+
+            //     i += 1
+
+            // }
 
             // draw horizontal lines
             i = 0
-            while(i <= rows) {
+            while(i <= 0) {
 
-                p = this.cartesian2DToIsometric({ x: 0, y: i * this.TILE_SIZE + this.HALF_PIXEL })
+                p = this.cartesian2DToIsometric({ x: this.CENTER_X(), y: this.CENTER_Y() - (i * this.TILE_SIZE + this.HALF_PIXEL) / 2 })
                 this.ctx.moveTo(p.x, p.y)
 
-                p = this.cartesian2DToIsometric({ x: cols * this.TILE_SIZE, y: i * this.TILE_SIZE + this.HALF_PIXEL } )
+                p = this.cartesian2DToIsometric({ x: this.CENTER_X() + cols * this.TILE_SIZE, y: this.CENTER_Y() } )
                 this.ctx.lineTo(p.x, p.y)
                 
                 i += 1
@@ -149,16 +203,29 @@ var TACTICAL = (function(o) {
         drawTile: function(row, col, fillStyle, strokeStyle) {
 
             this.ctx.fillStyle = fillStyle
-            this.ctx.fillRect(row * this.TILE_SIZE + 1,
-                col * this.TILE_SIZE + 1,
-                this.TILE_SIZE - 1,
-                this.TILE_SIZE - 1)
+            // this.ctx.fillRect(row * this.TILE_SIZE + 1,
+            //     col * this.TILE_SIZE + 1,
+            //     this.TILE_SIZE - 1,
+            //     this.TILE_SIZE - 1)
             
             this.ctx.strokeStyle = strokeStyle
-            this.ctx.strokeRect(row * this.TILE_SIZE + this.HALF_PIXEL,
-                col * this.TILE_SIZE + this.HALF_PIXEL,
-                this.TILE_SIZE,
-                this.TILE_SIZE)
+            // this.ctx.strokeRect(row * this.TILE_SIZE + this.HALF_PIXEL,
+            //     col * this.TILE_SIZE + this.HALF_PIXEL,
+            //     this.TILE_SIZE,
+            //     this.TILE_SIZE)
+
+            var x = row * this.TILE_SIZE + this.HALF_PIXEL,
+                y = col * this.TILE_SIZE + this.HALF_PIXEL
+
+            this.ctx.fill()
+
+            this.ctx.beginPath()
+            this.ctx.moveTo(x, y)
+            this.ctx.lineTo(x + this.TILE_SIZE, y - this.TILE_SIZE / 2)
+            this.ctx.lineTo(x + this.TILE_SIZE * 2, y)
+            this.ctx.lineTo(x + this.TILE_SIZE, y + this.TILE_SIZE / 2)
+            this.ctx.closePath() // draws last line of the tile
+            this.ctx.stroke()
 
         },
 
@@ -190,11 +257,13 @@ var TACTICAL = (function(o) {
 
         highlightTile: function(e) {
 
-            var p = this.cartesian2DToIsometric({ x: e.x, y: e.y })
-            var row = parseInt(p.x / this.TILE_SIZE, 10), 
-                col = parseInt(p.y / this.TILE_SIZE, 10)
+            //console.log('highlightTile: [raw.x: ' + e.x + ', raw.y: ' + e.y + ']')
+            //var p = this.cartesian2DToIsometric({ x: e.x, y: e.y })
+            //console.log('highlightTile: [iso.x: ' + p.x + ', iso.y: ' + p.y + ']')
+            var row = parseInt(e.x / this.TILE_SIZE, 10), 
+                col = parseInt(e.y / this.TILE_SIZE, 10)
 
-            console.log('highlightedTile: ' + row + ', ' + col)
+            // console.log('highlightedTile: [row: ' + row + ', col: ' + col)
 
             if(typeof this.highlightedTile.row === "number") {
 
@@ -224,7 +293,7 @@ var TACTICAL = (function(o) {
                     break;
 
                 case this.EventTypeEnum.MOVE:
-                    this.highlightTile(e)
+                    //this.highlightTile(e)
                     break;
                 
                 default:

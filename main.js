@@ -184,12 +184,15 @@ var TACTICAL = (function(o) {
 
             // draw horizontal lines
             i = 0
-            while(i <= 0) {
+            while(i <= cols) {
+                o = { x: (this.CENTER_X() + (i * this.TILE_SIZE - (cols * this.TILE_SIZE) / 2)) + this.HALF_PIXEL, y: (this.CENTER_Y() - (rows * this.TILE_SIZE) / 2) + this.HALF_PIXEL }
+                console.log(o)
+                p = this.cartesian2DToIsometric(o)
+                console.log(p)
+                this.ctx.moveTo(p.x + this.CENTER_X(), p.y)
 
-                p = this.cartesian2DToIsometric({ x: this.CENTER_X(), y: this.CENTER_Y() - (i * this.TILE_SIZE + this.HALF_PIXEL) / 2 })
-                this.ctx.moveTo(p.x, p.y)
-
-                p = this.cartesian2DToIsometric({ x: this.CENTER_X() + cols * this.TILE_SIZE, y: this.CENTER_Y() } )
+                
+                p = this.cartesian2DToIsometric({ x: (this.CENTER_X() + (i * this.TILE_SIZE - (cols * this.TILE_SIZE) / 2)) + this.HALF_PIXEL, y: (this.CENTER_Y() + (rows * this.TILE_SIZE) / 2) + this.HALF_PIXEL } )
                 this.ctx.lineTo(p.x, p.y)
                 
                 i += 1

@@ -97,8 +97,8 @@ var TACTICAL = (function(o) {
 
         draw: function() {
 
+            // draw normal grid following matrix (array) data
             // var currentRow = 0, currentColumn = 0
-            
             // for(var i=0; i < this.map.length; i += 1) {
                 
                 // Next row
@@ -116,13 +116,46 @@ var TACTICAL = (function(o) {
 
             // }
 
-            // draw vertical lines
             var i = 0,
                 p = { x: 0, y: 0 },
                 // rows = parseInt(this.HEIGHT / this.TILE_SIZE, 10) * 2,
                 // cols = parseInt(this.WIDTH / this.TILE_SIZE, 10) * 2
                 rows = 3,
-                cols = 3
+                cols = 3,
+                gridCenterX = (cols * this.TILE_SIZE) / 2,
+                gridCenterY = (rows * this.TILE_SIZE) / 2
+
+            // draw horizontal lines
+            i = 0
+            while(i <= cols) {
+                o = { x: 0, y: i * this.TILE_SIZE }
+                console.log(o)
+                p = this.cartesian2DToIsometric(o)
+                console.log(p)
+                this.ctx.moveTo(p.x + this.CENTER_X(), p.y + (this.CENTER_Y() - gridCenterY))
+                
+                p = this.cartesian2DToIsometric({ x: (cols * this.TILE_SIZE), y: i * this.TILE_SIZE } )
+                this.ctx.lineTo(p.x + this.CENTER_X(), p.y + (this.CENTER_Y() - gridCenterY))
+                
+                i += 1
+            }
+
+            // draw vertical lines
+            i = 0
+            while(i <= cols) {
+                o = { x: i * this.TILE_SIZE, y: 0 }
+                console.log(o)
+                p = this.cartesian2DToIsometric(o)
+                console.log(p)
+                this.ctx.moveTo(p.x + this.CENTER_X(), p.y + (this.CENTER_Y() - gridCenterY))
+
+                
+                p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE, y: (rows * this.TILE_SIZE) } )
+                this.ctx.lineTo(p.x + this.CENTER_X(), p.y + (this.CENTER_Y() - gridCenterY))
+                
+                i += 1
+            }
+
 
             // this.ctx.moveTo(this.CENTER_X(), 0)
             // this.ctx.lineTo(this.CENTER_X(), this.HEIGHT)
@@ -149,58 +182,62 @@ var TACTICAL = (function(o) {
             // this.ctx.stroke()
 
 
-            i = 0
-            while(i <= this.WIDTH / this.TILE_SIZE)
-            {
-                this.ctx.moveTo(i * this.TILE_SIZE, 0)
-                this.ctx.lineTo(i * this.TILE_SIZE, this.HEIGHT)
-
-                i += 1
-            }
-
-            i = 0
-            while(i <= this.HEIGHT / this.TILE_SIZE)
-            {
-                this.ctx.moveTo(0, i * this.TILE_SIZE)
-                this.ctx.lineTo(this.WIDTH, i * this.TILE_SIZE)
-                
-                i += 1
-            }
-
-
-
-
-            // while(i <= cols) {
-
-            //     p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE + this.HALF_PIXEL, y: 0 })
-            //     this.ctx.moveTo(p.x, p.y)
-
-            //     p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE + this.HALF_PIXEL, y: rows * this.TILE_SIZE })
-            //     this.ctx.lineTo(p.x, p.y)
+            // draw normal grid
+            // i = 0
+            // while(i <= this.WIDTH / this.TILE_SIZE)
+            // {
+            //     this.ctx.moveTo(i * this.TILE_SIZE, 0)
+            //     this.ctx.lineTo(i * this.TILE_SIZE, this.HEIGHT)
 
             //     i += 1
-
             // }
 
-            // draw horizontal lines
-            i = 0
-            while(i <= cols) {
-                o = { x: (this.CENTER_X() + (i * this.TILE_SIZE - (cols * this.TILE_SIZE) / 2)) + this.HALF_PIXEL, y: (this.CENTER_Y() - (rows * this.TILE_SIZE) / 2) + this.HALF_PIXEL }
-                console.log(o)
-                p = this.cartesian2DToIsometric(o)
-                console.log(p)
-                this.ctx.moveTo(p.x + this.CENTER_X(), p.y)
-
+            // i = 0
+            // while(i <= this.HEIGHT / this.TILE_SIZE)
+            // {
+            //     this.ctx.moveTo(0, i * this.TILE_SIZE)
+            //     this.ctx.lineTo(this.WIDTH, i * this.TILE_SIZE)
                 
-                p = this.cartesian2DToIsometric({ x: (this.CENTER_X() + (i * this.TILE_SIZE - (cols * this.TILE_SIZE) / 2)) + this.HALF_PIXEL, y: (this.CENTER_Y() + (rows * this.TILE_SIZE) / 2) + this.HALF_PIXEL } )
-                this.ctx.lineTo(p.x, p.y)
-                
-                i += 1
+            //     i += 1
+            // }
 
-            }
+
+
+
 
             this.ctx.stroke()
 
+
+            this.drawIsoTile(this.CENTER_X(), this.CENTER_Y())
+
+        },
+
+        drawIsoTile: function(offsetX, offsetY) {
+
+            this.ctx.fillStyle = this.highlightedTile.fillStyle
+            this.ctx.strokeStyle = this.highlightedTile.strokeStyle
+
+            var x = 0,
+                y = 0,
+                offsetX = offsetX || 0,
+                offsetY = offsetY || 0,
+                points = [ 
+                    this.cartesian2DToIsometric({ x: 0, y: 0 }),
+                    this.cartesian2DToIsometric({ x: this.TILE_SIZE, y: 0 }),
+                    this.cartesian2DToIsometric({ x: this.TILE_SIZE, y: this.TILE_SIZE }),
+                    this.cartesian2DToIsometric({ x: 0, y: this.TILE_SIZE })
+                ],
+                isoPoint = {}
+
+            this.ctx.beginPath()
+            this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY)
+            this.ctx.lineTo(points[1].x + offsetX, points[1].y + offsetY)
+            this.ctx.lineTo(points[2].x + offsetX, points[2].y + offsetY)
+            this.ctx.lineTo(points[3].x + offsetX, points[3].y + offsetY)
+            this.ctx.closePath() // draws last line of the tile
+            this.ctx.stroke()
+            
+            this.ctx.fill()
         },
 
         drawTile: function(row, col, fillStyle, strokeStyle) {

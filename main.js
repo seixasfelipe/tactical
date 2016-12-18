@@ -9,7 +9,7 @@ var TACTICAL = (function(o) {
         HEIGHT: 0, 
         ROWS: 0, 
         COLS: 0,
-        VIEWPORT: { x: -320, y: 0 },
+        VIEWPORT: { },
         CENTER_X: function() {
             return this.WIDTH / 2;
         },
@@ -35,7 +35,9 @@ var TACTICAL = (function(o) {
 
         EventTypeEnum: Object.freeze({
             CLICK: 1, 
-            MOVE: 2
+            MOVE: 2,
+            LEFT: 3,
+            RIGHT: 4
         }),
 
         // map: [
@@ -60,9 +62,17 @@ var TACTICAL = (function(o) {
 
             this.WIDTH   = c.width
             this.HEIGHT  = c.height
-            this.ROWS    = 5
-            this.COLS    = 5
+            this.ROWS    = 10
+            this.COLS    = 10
             this.TILE_SIZE = 64
+            this.VIEWPORT = { 
+                x: -(this.TILE_SIZE * this.ROWS), 
+                y: 0, 
+                minX: -(this.TILE_SIZE * this.ROWS), 
+                maxX: this.TILE_SIZE * this.ROWS,
+                width: c.width,
+                height: c.height 
+            }
 
             var that = this
 
@@ -73,6 +83,19 @@ var TACTICAL = (function(o) {
             c.onmousemove = function(e) {
                 that.handleEvent.call(that, that.EventTypeEnum.MOVE, { x: e.offsetX, y: e.offsetY })
             }
+
+            document.addEventListener('keydown', function(e) {
+                switch(e.which) {
+                    case 37: // LEFT
+                        that.handleEvent.call(that, that.EventTypeEnum.LEFT, e)
+                        break;
+                    case 39: // RIGHT
+                        that.handleEvent.call(that, that.EventTypeEnum.RIGHT, e)
+                        break;
+                    default:
+                        break;
+                }                
+            })
 
             this.draw()
 
@@ -98,90 +121,55 @@ var TACTICAL = (function(o) {
 
         draw: function() {
 
-            // draw normal grid following matrix (array) data
-            // var currentRow = 0, currentColumn = 0
-            // for(var i=0; i < this.map.length; i += 1) {
-                
+            var currentRow = 0, currentColumn = 0
+            for(var i=0; i < this.ROWS * this.COLS; i += 1) {
+
                 // Next row
-                // if ( currentRow != parseInt( (i / this.ROWS), 10) ) {
-                //     currentRow = parseInt( (i / this.ROWS), 10)
-                //     currentColumn = 0    
-                // }
+                if ( currentRow != parseInt( (i / this.ROWS), 10) ) {
+                    currentRow = parseInt( (i / this.ROWS), 10)
+                    currentColumn = 0    
+                }
 
-                // this.ctx.strokeRect(currentRow * this.TILE_SIZE, 
-                //     currentColumn * this.TILE_SIZE,
-                //     this.TILE_SIZE, 
-                //     this.TILE_SIZE)
+                this.drawIsoTile(currentColumn * this.TILE_SIZE,
+                    currentRow * this.TILE_SIZE,
+                    -(this.VIEWPORT.x),
+                    this.VIEWPORT.y,
+                    this.unselectedTile)
                 
-                // currentColumn += 1
+                currentColumn += 1
 
-            // }
-
-            var i = 0,
-                p = { x: 0, y: 0 },
-                // rows = parseInt(this.HEIGHT / this.TILE_SIZE, 10) * 2,
-                // cols = parseInt(this.WIDTH / this.TILE_SIZE, 10) * 2
-                gridCenterX = (this.COLS * this.TILE_SIZE) / 2,
-                gridCenterY = (this.ROWS * this.TILE_SIZE) / 2
-
-            // draw horizontal lines
-            i = 0
-            while(i <= this.ROWS) {
-                o = { x: 0, y: i * this.TILE_SIZE }
-                p = this.cartesian2DToIsometric(o)
-                this.ctx.moveTo(p.x + this.CENTER_X(), p.y)
-                
-                p = this.cartesian2DToIsometric({ x: (this.COLS * this.TILE_SIZE), y: i * this.TILE_SIZE } )
-                this.ctx.lineTo(p.x + this.CENTER_X(), p.y)
-                
-                i += 1
-            }
-
-            // draw vertical lines
-            i = 0
-            while(i <= this.COLS) {
-                o = { x: i * this.TILE_SIZE, y: 0 }
-                p = this.cartesian2DToIsometric(o)
-                this.ctx.moveTo(p.x + this.CENTER_X(), p.y)
-
-                
-                p = this.cartesian2DToIsometric({ x: i * this.TILE_SIZE, y: (this.ROWS * this.TILE_SIZE) } )
-                this.ctx.lineTo(p.x + this.CENTER_X(), p.y)
-                
-                i += 1
             }
 
 
-            // draw normal grid
-            // i = 0
-            // while(i <= this.WIDTH / this.TILE_SIZE)
-            // {
-            //     this.ctx.moveTo(i * this.TILE_SIZE, 0)
-            //     this.ctx.lineTo(i * this.TILE_SIZE, this.HEIGHT)
 
-            //     i += 1
-            // }
-
-            // i = 0
-            // while(i <= this.HEIGHT / this.TILE_SIZE)
-            // {
-            //     this.ctx.moveTo(0, i * this.TILE_SIZE)
-            //     this.ctx.lineTo(this.WIDTH, i * this.TILE_SIZE)
-                
-            //     i += 1
-            // }
-
-
-
-
-
-            this.ctx.stroke()
         },
 
-        drawIsoTile: function(upperLeftX, upperLeftY, offsetX, offsetY) {
+        moveViewport: function(offsetX, offsetY) {
+            this.VIEWPORT.x += offsetX
+            this.VIEWPORT.y += offsetY
 
-            this.ctx.fillStyle = this.highlightedTile.fillStyle
-            this.ctx.strokeStyle = this.highlightedTile.strokeStyle
+            console.log('offsetX: ' + offsetX + ', offsetY: ' + offsetY)
+            console.log('this.VIEWPORT.minX: ' + this.VIEWPORT.minX + ', this.VIEWPORT.maxX: ' + this.VIEWPORT.maxX)
+
+            if(this.VIEWPORT.x < this.VIEWPORT.minX) {
+                this.VIEWPORT.x = this.VIEWPORT.minX
+            }
+
+            if( (this.VIEWPORT.x + this.VIEWPORT.width) > this.VIEWPORT.maxX) {
+                this.VIEWPORT.x = this.VIEWPORT.maxX - this.VIEWPORT.width
+            }
+
+            this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+            
+            console.log('viewport: ' + this.VIEWPORT.x + ', ' + this.VIEWPORT.y)
+            
+            this.draw()
+        },
+
+        drawIsoTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style) {
+
+            this.ctx.fillStyle = style.fillStyle
+            this.ctx.strokeStyle = style.strokeStyle
 
             var x = 0,
                 y = 0,
@@ -206,11 +194,11 @@ var TACTICAL = (function(o) {
             this.ctx.fill()
         },
 
-        selectIsoTile: function(e) {
+        selectIsoTile: function(e, style) {
 
             console.log('screen point: ' + e.x + ', ' + e.y)
 
-            var isoPoint = { x: e.x + this.VIEWPORT.x, y: this.VIEWPORT.y + e.y }
+            var isoPoint = { x: this.VIEWPORT.x + e.x, y: this.VIEWPORT.y + e.y }
             var cartPoint = this.isometricToCartesian2D(isoPoint)
 
             console.log('iso point: ' + isoPoint.x + ', ' + isoPoint.y)
@@ -227,12 +215,16 @@ var TACTICAL = (function(o) {
             if(row < 0 || col < 0 || row >= this.ROWS || col >= this.COLS)
                 return;
 
+            style = style || this.selectedTile
+            console.log(style)
+
             this.drawIsoTile(col * this.TILE_SIZE, row * this.TILE_SIZE,
-                            Math.abs(this.VIEWPORT.x), Math.abs(this.VIEWPORT.y))
+                            -(this.VIEWPORT.x), this.VIEWPORT.y,
+                            style)
         },
 
         highlightIsoTile: function(e) {
-            this.selectIsoTile(e)
+            this.selectIsoTile(e, this.highlightedTile)
         },
 
         drawTile: function(row, col, fillStyle, strokeStyle) {
@@ -309,15 +301,21 @@ var TACTICAL = (function(o) {
             switch(type) {
                 
                 case this.EventTypeEnum.CLICK:
-                    // this.selectTile(e)
                     this.selectIsoTile(e)
                     break;
 
                 case this.EventTypeEnum.MOVE:
-                    //this.highlightTile(e)
                     this.highlightIsoTile(e)
                     break;
+
+                case this.EventTypeEnum.LEFT:
+                    this.moveViewport(this.TILE_SIZE, 0)
+                    break;
                 
+                case this.EventTypeEnum.RIGHT:
+                    this.moveViewport(-this.TILE_SIZE, 0)
+                    break;
+
                 default:
                     break;
             }

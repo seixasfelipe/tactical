@@ -37,7 +37,9 @@ var TACTICAL = (function(o) {
             CLICK: 1, 
             MOVE: 2,
             LEFT: 3,
-            RIGHT: 4
+            UP: 4,
+            RIGHT: 5,
+            DOWN: 6
         }),
 
         // map: [
@@ -62,14 +64,16 @@ var TACTICAL = (function(o) {
 
             this.WIDTH   = c.width
             this.HEIGHT  = c.height
-            this.ROWS    = 10
-            this.COLS    = 10
+            this.ROWS    = 5
+            this.COLS    = 5
             this.TILE_SIZE = 64
             this.VIEWPORT = { 
                 x: -(this.TILE_SIZE * this.ROWS), 
                 y: 0, 
                 minX: -(this.TILE_SIZE * this.ROWS), 
                 maxX: this.TILE_SIZE * this.ROWS,
+                minY: -(this.TILE_SIZE * this.ROWS),
+                maxY: 0,
                 width: c.width,
                 height: c.height 
             }
@@ -89,9 +93,16 @@ var TACTICAL = (function(o) {
                     case 37: // LEFT
                         that.handleEvent.call(that, that.EventTypeEnum.LEFT, e)
                         break;
+                    case 38: // UP
+                        that.handleEvent.call(that, that.EventTypeEnum.UP, e)
+                        break;
                     case 39: // RIGHT
                         that.handleEvent.call(that, that.EventTypeEnum.RIGHT, e)
                         break;
+                    case 40: // DOWN
+                        that.handleEvent.call(that, that.EventTypeEnum.DOWN, e)
+                        break;
+
                     default:
                         break;
                 }                
@@ -133,7 +144,7 @@ var TACTICAL = (function(o) {
                 this.drawIsoTile(currentColumn * this.TILE_SIZE,
                     currentRow * this.TILE_SIZE,
                     -(this.VIEWPORT.x),
-                    this.VIEWPORT.y,
+                    -(this.VIEWPORT.y),
                     this.unselectedTile)
                 
                 currentColumn += 1
@@ -150,6 +161,7 @@ var TACTICAL = (function(o) {
 
             console.log('offsetX: ' + offsetX + ', offsetY: ' + offsetY)
             console.log('this.VIEWPORT.minX: ' + this.VIEWPORT.minX + ', this.VIEWPORT.maxX: ' + this.VIEWPORT.maxX)
+            console.log('this.VIEWPORT.minY: ' + this.VIEWPORT.minY + ', this.VIEWPORT.maxY: ' + this.VIEWPORT.maxY)
 
             if(this.VIEWPORT.x < this.VIEWPORT.minX) {
                 this.VIEWPORT.x = this.VIEWPORT.minX
@@ -157,6 +169,14 @@ var TACTICAL = (function(o) {
 
             if( (this.VIEWPORT.x + this.VIEWPORT.width) > this.VIEWPORT.maxX) {
                 this.VIEWPORT.x = this.VIEWPORT.maxX - this.VIEWPORT.width
+            }
+
+            if(this.VIEWPORT.y < this.VIEWPORT.minY) {
+                this.VIEWPORT.y = this.VIEWPORT.minY
+            }
+
+            if( (this.VIEWPORT.y - this.VIEWPORT.height) > this.VIEWPORT.maxX) {
+                this.VIEWPORT.y = this.VIEWPORT.maxX
             }
 
             this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
@@ -219,7 +239,7 @@ var TACTICAL = (function(o) {
             console.log(style)
 
             this.drawIsoTile(col * this.TILE_SIZE, row * this.TILE_SIZE,
-                            -(this.VIEWPORT.x), this.VIEWPORT.y,
+                            -(this.VIEWPORT.x), -this.VIEWPORT.y,
                             style)
         },
 
@@ -314,6 +334,14 @@ var TACTICAL = (function(o) {
                 
                 case this.EventTypeEnum.RIGHT:
                     this.moveViewport(-this.TILE_SIZE, 0)
+                    break;
+
+                case this.EventTypeEnum.UP:
+                    this.moveViewport(0, -this.TILE_SIZE)
+                    break;
+                
+                case this.EventTypeEnum.DOWN:
+                    this.moveViewport(0, this.TILE_SIZE)
                     break;
 
                 default:

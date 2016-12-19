@@ -64,8 +64,8 @@ var TACTICAL = (function(o) {
 
             this.WIDTH   = c.width
             this.HEIGHT  = c.height
-            this.ROWS    = 5
-            this.COLS    = 5
+            this.ROWS    = 15
+            this.COLS    = 15
             this.TILE_SIZE = 64
             this.VIEWPORT = { 
                 x: -(this.TILE_SIZE * this.ROWS), 

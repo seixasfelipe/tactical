@@ -66,7 +66,7 @@ var TACTICAL = (function(o) {
             this.HEIGHT  = c.height
             this.ROWS    = 15
             this.COLS    = 15
-            this.TILE_SIZE = 64
+            this.TILE_SIZE = 32
             this.VIEWPORT = { 
                 x: -(this.TILE_SIZE * this.ROWS), 
                 y: 0, 
@@ -200,8 +200,7 @@ var TACTICAL = (function(o) {
                     this.cartesian2DToIsometric({ x: upperLeftX + this.TILE_SIZE, y: upperLeftY }),
                     this.cartesian2DToIsometric({ x: upperLeftX + this.TILE_SIZE, y: upperLeftY + this.TILE_SIZE }),
                     this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY + this.TILE_SIZE })
-                ],
-                isoPoint = {}
+                ]
 
             this.ctx.beginPath()
             this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY)
@@ -214,8 +213,60 @@ var TACTICAL = (function(o) {
             this.ctx.fill()
         },
 
-        selectIsoTile: function(e, style) {
+        drawIso3DTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style) {
 
+            this.ctx.fillStyle = style.fillStyle
+            this.ctx.strokeStyle = style.strokeStyle
+
+            var x = 0,
+                y = 0,
+                offsetX = offsetX || 0,
+                offsetY = offsetY || 0,
+                points = [ 
+                    this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY }),
+                    this.cartesian2DToIsometric({ x: upperLeftX + this.TILE_SIZE, y: upperLeftY }),
+                    this.cartesian2DToIsometric({ x: upperLeftX + this.TILE_SIZE, y: upperLeftY + this.TILE_SIZE }),
+                    this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY + this.TILE_SIZE })
+                ],
+                height = this.TILE_SIZE * 1.5,
+                dy = offsetY - height - this.HALF_PIXEL
+
+            this.ctx.beginPath()
+            // floor
+            this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY)
+            this.ctx.lineTo(points[1].x + offsetX, points[1].y + offsetY)
+            this.ctx.lineTo(points[2].x + offsetX, points[2].y + offsetY)
+            this.ctx.lineTo(points[3].x + offsetX, points[3].y + offsetY)
+            this.ctx.closePath() // draws last line of the tile
+
+            this.ctx.beginPath()
+            // ceiling
+            this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY - height)
+            this.ctx.lineTo(points[1].x + offsetX, points[1].y + offsetY - height)
+            this.ctx.lineTo(points[2].x + offsetX, points[2].y + offsetY - height)
+            this.ctx.lineTo(points[3].x + offsetX, points[3].y + offsetY - height)
+            this.ctx.closePath() // draws last line of the tile
+
+            this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY)
+            this.ctx.lineTo(points[0].x + offsetX, points[0].y + dy)
+
+            this.ctx.moveTo(points[1].x + offsetX, points[1].y + offsetY)
+            this.ctx.lineTo(points[1].x + offsetX, points[1].y + dy)
+
+            this.ctx.moveTo(points[2].x + offsetX, points[2].y + offsetY)
+            this.ctx.lineTo(points[2].x + offsetX, points[2].y + dy)
+
+            this.ctx.moveTo(points[3].x + offsetX, points[3].y + offsetY)
+            this.ctx.lineTo(points[3].x + offsetX, points[3].y + dy)
+
+            this.ctx.stroke()
+            
+            this.ctx.fill()
+
+
+        },
+
+        getCartesianTilePosition(e) {
             console.log('screen point: ' + e.x + ', ' + e.y)
 
             var isoPoint = { x: this.VIEWPORT.x + e.x, y: this.VIEWPORT.y + e.y }
@@ -235,16 +286,36 @@ var TACTICAL = (function(o) {
             if(row < 0 || col < 0 || row >= this.ROWS || col >= this.COLS)
                 return;
 
+            return { 
+                x: col * this.TILE_SIZE, 
+                y: row * this.TILE_SIZE
+            }
+        },
+
+        selectIsoTile: function(e, style) {
+
+            var p = this.getCartesianTilePosition(e)
+
+            if(!p) return;
+
             style = style || this.selectedTile
             console.log(style)
 
-            this.drawIsoTile(col * this.TILE_SIZE, row * this.TILE_SIZE,
+            this.drawIsoTile(p.x, p.y,
                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
                             style)
         },
 
         highlightIsoTile: function(e) {
-            this.selectIsoTile(e, this.highlightedTile)
+
+            // var p = this.getCartesianTilePosition(e)
+
+            // if(!p) return;
+
+            // this.drawIso3DTile(p.x, p.y,
+            //                 -(this.VIEWPORT.x), -this.VIEWPORT.y,
+            //                 this.unselectedTile)
+
         },
 
         drawTile: function(row, col, fillStyle, strokeStyle) {

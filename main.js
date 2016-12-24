@@ -329,11 +329,11 @@ var TACTICAL = (function(o) {
                     break;
 
                 case this.EventTypeEnum.LEFT:
-                    this.moveViewport(this.TILE_SIZE, 0)
+                    this.moveViewport(-this.TILE_SIZE, 0)
                     break;
                 
                 case this.EventTypeEnum.RIGHT:
-                    this.moveViewport(-this.TILE_SIZE, 0)
+                    this.moveViewport(this.TILE_SIZE, 0)
                     break;
 
                 case this.EventTypeEnum.UP:

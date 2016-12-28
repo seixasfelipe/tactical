@@ -132,6 +132,12 @@ var TACTICAL = (function(o) {
 
         draw: function() {
 
+            this.drawMap()
+            this.drawMiniMap()
+        },
+
+        drawMap: function() {
+            
             var currentRow = 0, currentColumn = 0
             for(var i=0; i < this.ROWS * this.COLS; i += 1) {
 
@@ -148,11 +154,35 @@ var TACTICAL = (function(o) {
                     this.unselectedTile)
                 
                 currentColumn += 1
-
             }
+        },
 
+        drawMiniMap: function() {
 
+            var miniMapX = 0 + this.HALF_PIXEL,
+                miniMapY = Math.floor(3 * this.HEIGHT / 4) + this.HALF_PIXEL,
+                tileSize = this.TILE_SIZE / 4
 
+            this.ctx.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))
+
+            var currentRow = 0, currentColumn = 0
+            for(var i=0; i < this.ROWS * this.COLS; i += 1) {
+
+                // Next row
+                if ( currentRow != parseInt( (i / this.ROWS), 10) ) {
+                    currentRow = parseInt( (i / this.ROWS), 10)
+                    currentColumn = 0    
+                }
+
+                this.drawIsoTile(currentColumn * tileSize,
+                    currentRow * tileSize,
+                    -this.VIEWPORT.x / 4,
+                    -(this.VIEWPORT.y / 4) + miniMapY,
+                    this.unselectedTile,
+                    tileSize)
+                
+                currentColumn += 1
+            }
         },
 
         moveViewport: function(offsetX, offsetY) {
@@ -186,7 +216,7 @@ var TACTICAL = (function(o) {
             this.draw()
         },
 
-        drawIsoTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style) {
+        drawIsoTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style, tileSize) {
 
             this.ctx.fillStyle = style.fillStyle
             this.ctx.strokeStyle = style.strokeStyle
@@ -195,11 +225,12 @@ var TACTICAL = (function(o) {
                 y = 0,
                 offsetX = offsetX || 0,
                 offsetY = offsetY || 0,
+                size = tileSize || this.TILE_SIZE,
                 points = [ 
                     this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY }),
-                    this.cartesian2DToIsometric({ x: upperLeftX + this.TILE_SIZE, y: upperLeftY }),
-                    this.cartesian2DToIsometric({ x: upperLeftX + this.TILE_SIZE, y: upperLeftY + this.TILE_SIZE }),
-                    this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY + this.TILE_SIZE })
+                    this.cartesian2DToIsometric({ x: upperLeftX + size, y: upperLeftY }),
+                    this.cartesian2DToIsometric({ x: upperLeftX + size, y: upperLeftY + size }),
+                    this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY + size })
                 ]
 
             this.ctx.beginPath()

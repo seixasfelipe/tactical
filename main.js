@@ -32,6 +32,10 @@ var TACTICAL = (function(o) {
             fillStyle: "rgb(0,255,0)",
             strokeStyle: "rgb(0,0,0)"
         },
+        terrainTile: {
+            fillStyle: "rgb(143, 120, 78)",
+            strokeStyle: "rgb(0,0,0)"  
+        },
 
         EventTypeEnum: Object.freeze({
             CLICK: 1, 
@@ -42,34 +46,48 @@ var TACTICAL = (function(o) {
             DOWN: 6
         }),
 
-        // map: [
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        // ],
+        map: {
+            rows: 20,
+            cols: 20,
+            data: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0,
+                0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+                0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ]
+        },
 
         init: function(c) {
 
-            this.ctx = canvas.getContext('2d')
+            this.ctx = c.getContext('2d')
 
             this.ctx.fillStyle = this.unselectedTile.fillStyle
             this.ctx.fillRect(0, 0, c.width, c.height)
 
             this.WIDTH   = c.width
             this.HEIGHT  = c.height
-            this.ROWS    = 15
-            this.COLS    = 15
+            this.ROWS    = this.map.rows
+            this.COLS    = this.map.cols
             this.TILE_SIZE = 32
             this.VIEWPORT = { 
-                x: -(this.TILE_SIZE * this.ROWS), 
-                y: 0, 
+                x: -(this.TILE_SIZE * this.ROWS)/2, 
+                y: (this.TILE_SIZE * this.ROWS)/8, 
                 minX: -(this.TILE_SIZE * this.ROWS), 
                 maxX: this.TILE_SIZE * this.ROWS,
                 minY: -(this.TILE_SIZE * this.ROWS),
@@ -138,7 +156,8 @@ var TACTICAL = (function(o) {
 
         drawMap: function() {
             
-            var currentRow = 0, currentColumn = 0
+            var currentRow = 0, currentColumn = 0,
+                style = this.unselectedTile
             for(var i=0; i < this.ROWS * this.COLS; i += 1) {
 
                 // Next row
@@ -147,11 +166,16 @@ var TACTICAL = (function(o) {
                     currentColumn = 0    
                 }
 
+                style = this.unselectedTile
+                if(this.map.data[i] === 1) {
+                    style = this.terrainTile
+                }
+
                 this.drawIsoTile(currentColumn * this.TILE_SIZE,
                     currentRow * this.TILE_SIZE,
                     -(this.VIEWPORT.x),
                     -(this.VIEWPORT.y),
-                    this.unselectedTile)
+                    style)
                 
                 currentColumn += 1
             }
@@ -165,7 +189,8 @@ var TACTICAL = (function(o) {
 
             this.ctx.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))
 
-            var currentRow = 0, currentColumn = 0
+            var currentRow = 0, currentColumn = 0,
+                style = this.unselectedTile
             for(var i=0; i < this.ROWS * this.COLS; i += 1) {
 
                 // Next row
@@ -174,11 +199,16 @@ var TACTICAL = (function(o) {
                     currentColumn = 0    
                 }
 
+                style = this.unselectedTile
+                if(this.map.data[i] === 1) {
+                    style = this.terrainTile
+                }
+
                 this.drawIsoTile(currentColumn * tileSize,
                     currentRow * tileSize,
                     -this.VIEWPORT.x / 4,
                     -(this.VIEWPORT.y / 4) + miniMapY,
-                    this.unselectedTile,
+                    style,
                     tileSize)
                 
                 currentColumn += 1

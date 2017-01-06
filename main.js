@@ -395,16 +395,16 @@ var TACTICAL = (function(o) {
 
         },
 
-        drawTile: function(row, col, fillStyle, strokeStyle) {
+        drawTile: function(context, row, col, fillStyle, strokeStyle) {
 
-            this.ctx.fillStyle = fillStyle
-            this.ctx.fillRect(row * this.TILE_SIZE + 1,
+            context.fillStyle = fillStyle
+            context.fillRect(row * this.TILE_SIZE + 1,
                 col * this.TILE_SIZE + 1,
                 this.TILE_SIZE - 1,
                 this.TILE_SIZE - 1)
             
-            this.ctx.strokeStyle = strokeStyle
-            this.ctx.strokeRect(row * this.TILE_SIZE + this.HALF_PIXEL,
+            context.strokeStyle = strokeStyle
+            context.strokeRect(row * this.TILE_SIZE + this.HALF_PIXEL,
                 col * this.TILE_SIZE + this.HALF_PIXEL,
                 this.TILE_SIZE,
                 this.TILE_SIZE)
@@ -419,7 +419,7 @@ var TACTICAL = (function(o) {
 
             if(typeof this.selectedTile.row === "number") {
 
-                this.drawTile(this.selectedTile.row, this.selectedTile.col, 
+                this.drawTile(this.ctx, this.selectedTile.row, this.selectedTile.col, 
                     this.unselectedTile.fillStyle, this.unselectedTile.strokeStyle)
 
             }
@@ -430,7 +430,7 @@ var TACTICAL = (function(o) {
             this.highlightedTile.row = null
             this.highlightedTile.col = null
 
-            this.drawTile(this.selectedTile.row, this.selectedTile.col, 
+            this.drawTile(this.ctx, this.selectedTile.row, this.selectedTile.col, 
                 this.selectedTile.fillStyle, this.selectedTile.strokeStyle)
         
         },
@@ -447,7 +447,7 @@ var TACTICAL = (function(o) {
 
             if(typeof this.highlightedTile.row === "number") {
 
-                this.drawTile(this.highlightedTile.row, this.highlightedTile.col, 
+                this.drawTile(this.ctx, this.highlightedTile.row, this.highlightedTile.col, 
                     this.unselectedTile.fillStyle, this.unselectedTile.strokeStyle)
 
             }
@@ -460,7 +460,7 @@ var TACTICAL = (function(o) {
             this.highlightedTile.row = row
             this.highlightedTile.col = col
 
-            this.drawTile(this.highlightedTile.row, this.highlightedTile.col, 
+            this.drawTile(this.ctx, this.highlightedTile.row, this.highlightedTile.col, 
                 this.highlightedTile.fillStyle, this.highlightedTile.strokeStyle)
         },
 

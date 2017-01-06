@@ -75,10 +75,10 @@ var TACTICAL = (function(o) {
             ]
         },
 
-        init: function(c) {
+        init: function(c, mm) {
 
             this.ctx = c.getContext('2d')
-
+            this.mm_ctx = mm.getContext('2d')
             this.ctx.fillStyle = this.unselectedTile.fillStyle
             this.ctx.fillRect(0, 0, c.width, c.height)
 
@@ -516,7 +516,7 @@ var TACTICAL = (function(o) {
             if(document.getElementById('canvas2d') == null)
                 document.body.appendChild(mm_canvas)
 
-            game.init(canvas)
+            game.init(canvas, mm_canvas)
         }
 
     }

@@ -5,11 +5,11 @@ var TACTICAL = (function(o) {
 
     var game = {
 
-        ctx: null, 
+        ctx: null,
         mm_ctx: null,
-        WIDTH: 0, 
+        WIDTH: 0,
         HEIGHT: 0, 
-        ROWS: 0, 
+        ROWS: 0,
         COLS: 0,
         VIEWPORT: { },
         CENTER_X: function() {

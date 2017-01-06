@@ -155,11 +155,11 @@ var TACTICAL = (function(o) {
 
         draw: function() {
 
-            this.drawMap()
-            this.drawMiniMap()
+            this.drawMap(this.ctx)
+            this.drawMiniMap(this.mm_ctx)
         },
 
-        drawMap: function() {
+        drawMap: function(context) {
             
             var currentRow = 0, currentColumn = 0,
                 style = this.unselectedTile
@@ -172,7 +172,7 @@ var TACTICAL = (function(o) {
                 }
                 style = this.getTileStyle(currentRow, currentColumn)
 
-                this.drawIsoTile(currentColumn * this.TILE_SIZE,
+                this.drawIsoTile(context, currentColumn * this.TILE_SIZE,
                     currentRow * this.TILE_SIZE,
                     -(this.VIEWPORT.x),
                     -(this.VIEWPORT.y),
@@ -182,13 +182,13 @@ var TACTICAL = (function(o) {
             }
         },
 
-        drawMiniMap: function() {
+        drawMiniMap: function(context) {
 
             var miniMapX = 0 + this.HALF_PIXEL,
                 miniMapY = Math.floor(3 * this.HEIGHT / 4) + this.HALF_PIXEL,
                 tileSize = this.TILE_SIZE / 4
 
-            this.mm_ctx.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))
+            context.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))
 
             var currentRow = 0, currentColumn = 0,
                 style = this.unselectedTile
@@ -202,7 +202,7 @@ var TACTICAL = (function(o) {
 
                 style = this.getTileStyle(currentRow, currentColumn)
 
-                this.drawIsoTile(currentColumn * tileSize,
+                this.drawIsoTile(context, currentColumn * tileSize,
                     currentRow * tileSize,
                     -this.VIEWPORT.x / 4,
                     -(this.VIEWPORT.y / 4) + miniMapY,
@@ -256,10 +256,10 @@ var TACTICAL = (function(o) {
             this.draw()
         },
 
-        drawIsoTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style, tileSize) {
+        drawIsoTile: function(context, upperLeftX, upperLeftY, offsetX, offsetY, style, tileSize) {
 
-            this.ctx.fillStyle = style.fillStyle
-            this.ctx.strokeStyle = style.strokeStyle
+            context.fillStyle = style.fillStyle
+            context.strokeStyle = style.strokeStyle
 
             var x = 0,
                 y = 0,
@@ -273,15 +273,15 @@ var TACTICAL = (function(o) {
                     this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY + size })
                 ]
 
-            this.ctx.beginPath()
-            this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY)
-            this.ctx.lineTo(points[1].x + offsetX, points[1].y + offsetY)
-            this.ctx.lineTo(points[2].x + offsetX, points[2].y + offsetY)
-            this.ctx.lineTo(points[3].x + offsetX, points[3].y + offsetY)
-            this.ctx.closePath() // draws last line of the tile
-            this.ctx.stroke()
+            context.beginPath()
+            context.moveTo(points[0].x + offsetX, points[0].y + offsetY)
+            context.lineTo(points[1].x + offsetX, points[1].y + offsetY)
+            context.lineTo(points[2].x + offsetX, points[2].y + offsetY)
+            context.lineTo(points[3].x + offsetX, points[3].y + offsetY)
+            context.closePath() // draws last line of the tile
+            context.stroke()
             
-            this.ctx.fill()
+            context.fill()
         },
 
         drawIso3DTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style) {

@@ -505,6 +505,11 @@ var TACTICAL = (function(o) {
         canvas.height = 480
         canvas.id = 'canvas2d'
 
+        mm_canvas = document.createElement('canvas')
+        mm_canvas.width = 320
+        mm_canvas.height = 240
+        mm_canvas.id = 'mm_canvas2d'
+
         if(document.getElementById('canvas2d') == null) {
             document.body.appendChild(canvas)
 

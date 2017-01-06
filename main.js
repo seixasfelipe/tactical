@@ -513,6 +513,9 @@ var TACTICAL = (function(o) {
         if(document.getElementById('canvas2d') == null) {
             document.body.appendChild(canvas)
 
+            if(document.getElementById('canvas2d') == null)
+                document.body.appendChild(mm_canvas)
+
             game.init(canvas)
         }
 

@@ -1,10 +1,12 @@
 var TACTICAL = (function(o) {
 
     var canvas
+    var mm_canvas
 
     var game = {
 
         ctx: null, 
+        mm_ctx: null,
         WIDTH: 0, 
         HEIGHT: 0, 
         ROWS: 0, 

@@ -95,7 +95,7 @@ var TACTICAL = (function(o) {
 
             c.setAttribute('style', 'position:absolute; top:0px; left:0px; z-index:0')
 
-            var mmY = Math.floor(this.HEIGHT / 2) + this.HALF_PIXEL
+            var mmY = Math.floor(this.HEIGHT) - this.HEIGHT / 4
             mm.setAttribute('style', 'position:absolute; top:' + mmY + 'px; left:0px; z-index:1')
 
             this.ctx = c.getContext('2d')
@@ -518,8 +518,8 @@ var TACTICAL = (function(o) {
         canvas.id = 'canvas2d'
 
         mm_canvas = document.createElement('canvas')
-        mm_canvas.width = 320
-        mm_canvas.height = 240
+        mm_canvas.width = canvas.width / 4
+        mm_canvas.height = canvas.height / 4
         mm_canvas.id = 'mm_canvas2d'
 
         if(document.getElementById('canvas2d') == null) {

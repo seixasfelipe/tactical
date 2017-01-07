@@ -93,6 +93,11 @@ var TACTICAL = (function(o) {
                 height: c.height 
             }
 
+            c.setAttribute('style', 'position:absolute; top:0px; left:0px; z-index:0')
+
+            var mmY = Math.floor(this.HEIGHT / 2) + this.HALF_PIXEL
+            mm.setAttribute('style', 'position:absolute; top:' + mmY + 'px; left:0px; z-index:1')
+
             this.ctx = c.getContext('2d')
             this.ctx.fillStyle = this.unselectedTile.fillStyle
             this.ctx.fillRect(0, 0, c.width, c.height)

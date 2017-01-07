@@ -1,13 +1,15 @@
 var TACTICAL = (function(o) {
 
     var canvas
+    var mm_canvas
 
     var game = {
 
-        ctx: null, 
-        WIDTH: 0, 
+        ctx: null,
+        mm_ctx: null,
+        WIDTH: 0,
         HEIGHT: 0, 
-        ROWS: 0, 
+        ROWS: 0,
         COLS: 0,
         VIEWPORT: { },
         CENTER_X: function() {
@@ -73,12 +75,7 @@ var TACTICAL = (function(o) {
             ]
         },
 
-        init: function(c) {
-
-            this.ctx = c.getContext('2d')
-
-            this.ctx.fillStyle = this.unselectedTile.fillStyle
-            this.ctx.fillRect(0, 0, c.width, c.height)
+        init: function(c, mm) {
 
             this.WIDTH   = c.width
             this.HEIGHT  = c.height
@@ -95,6 +92,19 @@ var TACTICAL = (function(o) {
                 width: c.width,
                 height: c.height 
             }
+
+            c.setAttribute('style', 'position:absolute; top:0px; left:0px; z-index:0')
+
+            var mmY = Math.floor(this.HEIGHT) - this.HEIGHT / 4
+            mm.setAttribute('style', 'position:absolute; top:' + mmY + 'px; left:0px; z-index:1')
+
+            this.ctx = c.getContext('2d')
+            this.ctx.fillStyle = this.unselectedTile.fillStyle
+            this.ctx.fillRect(0, 0, c.width, c.height)
+
+            this.mm_ctx = mm.getContext('2d')
+            this.mm_ctx.fillStyle = this.unselectedTile.fillStyle
+            this.mm_ctx.fillRect(0, 0, mm.width, mm.height)
 
             var that = this
 
@@ -150,11 +160,11 @@ var TACTICAL = (function(o) {
 
         draw: function() {
 
-            this.drawMap()
-            this.drawMiniMap()
+            this.drawMap(this.ctx)
+            this.drawMiniMap(this.mm_ctx)
         },
 
-        drawMap: function() {
+        drawMap: function(context) {
             
             var currentRow = 0, currentColumn = 0,
                 style = this.unselectedTile
@@ -167,7 +177,7 @@ var TACTICAL = (function(o) {
                 }
                 style = this.getTileStyle(currentRow, currentColumn)
 
-                this.drawIsoTile(currentColumn * this.TILE_SIZE,
+                this.drawIsoTile(context, currentColumn * this.TILE_SIZE,
                     currentRow * this.TILE_SIZE,
                     -(this.VIEWPORT.x),
                     -(this.VIEWPORT.y),
@@ -177,16 +187,19 @@ var TACTICAL = (function(o) {
             }
         },
 
-        drawMiniMap: function() {
+        drawMiniMap: function(context) {
 
             var miniMapX = 0 + this.HALF_PIXEL,
-                miniMapY = Math.floor(3 * this.HEIGHT / 4) + this.HALF_PIXEL,
+                miniMapY = 0,
                 tileSize = this.TILE_SIZE / 4
-
-            this.ctx.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))
 
             var currentRow = 0, currentColumn = 0,
                 style = this.unselectedTile
+
+            context.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+            context.fillStyle = 'rgb(255,255,255)'
+            context.fillRect(0, 0, this.WIDTH, this.HEIGHT)
+
             for(var i=0; i < this.ROWS * this.COLS; i += 1) {
 
                 // Next row
@@ -197,7 +210,7 @@ var TACTICAL = (function(o) {
 
                 style = this.getTileStyle(currentRow, currentColumn)
 
-                this.drawIsoTile(currentColumn * tileSize,
+                this.drawIsoTile(context, currentColumn * tileSize,
                     currentRow * tileSize,
                     -this.VIEWPORT.x / 4,
                     -(this.VIEWPORT.y / 4) + miniMapY,
@@ -245,16 +258,17 @@ var TACTICAL = (function(o) {
             }
 
             this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+            this.mm_ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
             
             console.log('viewport: ' + this.VIEWPORT.x + ', ' + this.VIEWPORT.y)
             
             this.draw()
         },
 
-        drawIsoTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style, tileSize) {
+        drawIsoTile: function(context, upperLeftX, upperLeftY, offsetX, offsetY, style, tileSize) {
 
-            this.ctx.fillStyle = style.fillStyle
-            this.ctx.strokeStyle = style.strokeStyle
+            context.fillStyle = style.fillStyle
+            context.strokeStyle = style.strokeStyle
 
             var x = 0,
                 y = 0,
@@ -268,15 +282,15 @@ var TACTICAL = (function(o) {
                     this.cartesian2DToIsometric({ x: upperLeftX, y: upperLeftY + size })
                 ]
 
-            this.ctx.beginPath()
-            this.ctx.moveTo(points[0].x + offsetX, points[0].y + offsetY)
-            this.ctx.lineTo(points[1].x + offsetX, points[1].y + offsetY)
-            this.ctx.lineTo(points[2].x + offsetX, points[2].y + offsetY)
-            this.ctx.lineTo(points[3].x + offsetX, points[3].y + offsetY)
-            this.ctx.closePath() // draws last line of the tile
-            this.ctx.stroke()
+            context.beginPath()
+            context.moveTo(points[0].x + offsetX, points[0].y + offsetY)
+            context.lineTo(points[1].x + offsetX, points[1].y + offsetY)
+            context.lineTo(points[2].x + offsetX, points[2].y + offsetY)
+            context.lineTo(points[3].x + offsetX, points[3].y + offsetY)
+            context.closePath() // draws last line of the tile
+            context.stroke()
             
-            this.ctx.fill()
+            context.fill()
         },
 
         drawIso3DTile: function(upperLeftX, upperLeftY, offsetX, offsetY, style) {
@@ -373,7 +387,7 @@ var TACTICAL = (function(o) {
 
             console.log(style)
 
-            this.drawIsoTile(p.x, p.y,
+            this.drawIsoTile(this.ctx, p.x, p.y,
                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
                             style)
         },
@@ -390,16 +404,16 @@ var TACTICAL = (function(o) {
 
         },
 
-        drawTile: function(row, col, fillStyle, strokeStyle) {
+        drawTile: function(context, row, col, fillStyle, strokeStyle) {
 
-            this.ctx.fillStyle = fillStyle
-            this.ctx.fillRect(row * this.TILE_SIZE + 1,
+            context.fillStyle = fillStyle
+            context.fillRect(row * this.TILE_SIZE + 1,
                 col * this.TILE_SIZE + 1,
                 this.TILE_SIZE - 1,
                 this.TILE_SIZE - 1)
             
-            this.ctx.strokeStyle = strokeStyle
-            this.ctx.strokeRect(row * this.TILE_SIZE + this.HALF_PIXEL,
+            context.strokeStyle = strokeStyle
+            context.strokeRect(row * this.TILE_SIZE + this.HALF_PIXEL,
                 col * this.TILE_SIZE + this.HALF_PIXEL,
                 this.TILE_SIZE,
                 this.TILE_SIZE)
@@ -414,7 +428,7 @@ var TACTICAL = (function(o) {
 
             if(typeof this.selectedTile.row === "number") {
 
-                this.drawTile(this.selectedTile.row, this.selectedTile.col, 
+                this.drawTile(this.ctx, this.selectedTile.row, this.selectedTile.col, 
                     this.unselectedTile.fillStyle, this.unselectedTile.strokeStyle)
 
             }
@@ -425,7 +439,7 @@ var TACTICAL = (function(o) {
             this.highlightedTile.row = null
             this.highlightedTile.col = null
 
-            this.drawTile(this.selectedTile.row, this.selectedTile.col, 
+            this.drawTile(this.ctx, this.selectedTile.row, this.selectedTile.col, 
                 this.selectedTile.fillStyle, this.selectedTile.strokeStyle)
         
         },
@@ -442,7 +456,7 @@ var TACTICAL = (function(o) {
 
             if(typeof this.highlightedTile.row === "number") {
 
-                this.drawTile(this.highlightedTile.row, this.highlightedTile.col, 
+                this.drawTile(this.ctx, this.highlightedTile.row, this.highlightedTile.col, 
                     this.unselectedTile.fillStyle, this.unselectedTile.strokeStyle)
 
             }
@@ -455,7 +469,7 @@ var TACTICAL = (function(o) {
             this.highlightedTile.row = row
             this.highlightedTile.col = col
 
-            this.drawTile(this.highlightedTile.row, this.highlightedTile.col, 
+            this.drawTile(this.ctx, this.highlightedTile.row, this.highlightedTile.col, 
                 this.highlightedTile.fillStyle, this.highlightedTile.strokeStyle)
         },
 
@@ -503,10 +517,18 @@ var TACTICAL = (function(o) {
         canvas.height = 480
         canvas.id = 'canvas2d'
 
+        mm_canvas = document.createElement('canvas')
+        mm_canvas.width = canvas.width / 4
+        mm_canvas.height = canvas.height / 4
+        mm_canvas.id = 'mm_canvas2d'
+
         if(document.getElementById('canvas2d') == null) {
             document.body.appendChild(canvas)
 
-            game.init(canvas)
+            if(document.getElementById('mm_canvas2d') == null)
+                document.body.appendChild(mm_canvas)
+
+            game.init(canvas, mm_canvas)
         }
 
     }

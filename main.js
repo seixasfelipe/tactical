@@ -195,6 +195,11 @@ var TACTICAL = (function(o) {
 
             var currentRow = 0, currentColumn = 0,
                 style = this.unselectedTile
+
+            context.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+            context.fillStyle = 'rgb(255,255,255)'
+            context.fillRect(0, 0, this.WIDTH, this.HEIGHT)
+
             for(var i=0; i < this.ROWS * this.COLS; i += 1) {
 
                 // Next row

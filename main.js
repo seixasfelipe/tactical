@@ -165,11 +165,7 @@ var TACTICAL = (function(o) {
                     currentRow = parseInt( (i / this.ROWS), 10)
                     currentColumn = 0    
                 }
-
-                style = this.unselectedTile
-                if(this.map.data[i] === 1) {
-                    style = this.terrainTile
-                }
+                style = this.getTileStyle(currentRow, currentColumn)
 
                 this.drawIsoTile(currentColumn * this.TILE_SIZE,
                     currentRow * this.TILE_SIZE,
@@ -199,10 +195,7 @@ var TACTICAL = (function(o) {
                     currentColumn = 0    
                 }
 
-                style = this.unselectedTile
-                if(this.map.data[i] === 1) {
-                    style = this.terrainTile
-                }
+                style = this.getTileStyle(currentRow, currentColumn)
 
                 this.drawIsoTile(currentColumn * tileSize,
                     currentRow * tileSize,
@@ -213,6 +206,18 @@ var TACTICAL = (function(o) {
                 
                 currentColumn += 1
             }
+        },
+
+        getTileStyle: function(row, col) {
+            var style = this.unselectedTile
+            if(this.selectedTile.row === row && this.selectedTile.col === col) {
+                style = this.selectedTile
+            }
+            else if(this.map.data[(row * this.COLS) + col] === 1) {
+                style = this.terrainTile
+            }
+
+            return style
         },
 
         moveViewport: function(offsetX, offsetY) {
@@ -349,7 +354,9 @@ var TACTICAL = (function(o) {
 
             return { 
                 x: col * this.TILE_SIZE, 
-                y: row * this.TILE_SIZE
+                y: row * this.TILE_SIZE,
+                row: row,
+                col: col
             }
         },
 
@@ -360,6 +367,10 @@ var TACTICAL = (function(o) {
             if(!p) return;
 
             style = style || this.selectedTile
+            
+            style.row = p.row
+            style.col = p.col
+
             console.log(style)
 
             this.drawIsoTile(p.x, p.y,

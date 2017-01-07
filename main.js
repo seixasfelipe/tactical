@@ -188,8 +188,6 @@ var TACTICAL = (function(o) {
                 miniMapY = 0,
                 tileSize = this.TILE_SIZE / 4
 
-            context.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))
-
             var currentRow = 0, currentColumn = 0,
                 style = this.unselectedTile
             for(var i=0; i < this.ROWS * this.COLS; i += 1) {

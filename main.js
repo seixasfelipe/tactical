@@ -253,6 +253,7 @@ var TACTICAL = (function(o) {
             }
 
             this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+            this.mm_ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
             
             console.log('viewport: ' + this.VIEWPORT.x + ', ' + this.VIEWPORT.y)
             

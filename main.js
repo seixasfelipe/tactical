@@ -77,14 +77,6 @@ var TACTICAL = (function(o) {
 
         init: function(c, mm) {
 
-            this.ctx = c.getContext('2d')
-            this.ctx.fillStyle = this.unselectedTile.fillStyle
-            this.ctx.fillRect(0, 0, c.width, c.height)
-
-            this.mm_ctx = mm.getContext('2d')
-            this.mm_ctx.fillStyle = this.unselectedTile.fillStyle
-            this.mm_ctx.fillRect(0, 0, mm.width, mm.height)
-
             this.WIDTH   = c.width
             this.HEIGHT  = c.height
             this.ROWS    = this.map.rows
@@ -100,6 +92,14 @@ var TACTICAL = (function(o) {
                 width: c.width,
                 height: c.height 
             }
+
+            this.ctx = c.getContext('2d')
+            this.ctx.fillStyle = this.unselectedTile.fillStyle
+            this.ctx.fillRect(0, 0, c.width, c.height)
+
+            this.mm_ctx = mm.getContext('2d')
+            this.mm_ctx.fillStyle = this.unselectedTile.fillStyle
+            this.mm_ctx.fillRect(0, 0, mm.width, mm.height)
 
             var that = this
 

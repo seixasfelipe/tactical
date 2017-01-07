@@ -394,13 +394,13 @@ var TACTICAL = (function(o) {
 
         highlightIsoTile: function(e) {
 
-            // var p = this.getCartesianTilePosition(e)
+            var p = this.getCartesianTilePosition(e)
 
-            // if(!p) return;
+            if(!p) return;
 
-            // this.drawIso3DTile(p.x, p.y,
-            //                 -(this.VIEWPORT.x), -this.VIEWPORT.y,
-            //                 this.unselectedTile)
+            this.drawIsoTile(this.ctx, p.x, p.y,
+                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
+                             this.highlightedTile)
 
         },
 

@@ -387,7 +387,7 @@ var TACTICAL = (function(o) {
 
             console.log(style)
 
-            this.drawIsoTile(p.x, p.y,
+            this.drawIsoTile(this.ctx, p.x, p.y,
                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
                             style)
         },

@@ -31,7 +31,7 @@ var TACTICAL = (function(o) {
             strokeStyle: "rgb(0,0,0)"
         },
         highlightedTile: {
-            fillStyle: "rgb(0,255,0)",
+            fillStyle: "rgb(220,220,220)",
             strokeStyle: "rgb(0,0,0)"
         },
         terrainTile: {

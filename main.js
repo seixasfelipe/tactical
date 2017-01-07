@@ -185,7 +185,7 @@ var TACTICAL = (function(o) {
         drawMiniMap: function(context) {
 
             var miniMapX = 0 + this.HALF_PIXEL,
-                miniMapY = Math.floor(3 * this.HEIGHT / 4) + this.HALF_PIXEL,
+                miniMapY = 0,
                 tileSize = this.TILE_SIZE / 4
 
             context.strokeRect(miniMapX, miniMapY, Math.floor(this.WIDTH / 4), Math.floor(this.HEIGHT / 4))

@@ -34,6 +34,13 @@ var TACTICAL = (function(o) {
             fillStyle: "rgb(220,220,220)",
             strokeStyle: "rgb(0,0,0)"
         },
+        prevHighlightedTile: {
+            row: null,
+            col: null,
+            x: null,
+            y: null,
+            fillStyle: null
+        },
         terrainTile: {
             fillStyle: "rgb(143, 120, 78)",
             strokeStyle: "rgb(0,0,0)"  

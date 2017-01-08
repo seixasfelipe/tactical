@@ -31,8 +31,15 @@ var TACTICAL = (function(o) {
             strokeStyle: "rgb(0,0,0)"
         },
         highlightedTile: {
-            fillStyle: "rgb(0,255,0)",
+            fillStyle: "rgb(220,220,220)",
             strokeStyle: "rgb(0,0,0)"
+        },
+        prevHighlightedTile: {
+            row: null,
+            col: null,
+            x: null,
+            y: null,
+            fillStyle: null
         },
         terrainTile: {
             fillStyle: "rgb(143, 120, 78)",
@@ -394,13 +401,28 @@ var TACTICAL = (function(o) {
 
         highlightIsoTile: function(e) {
 
-            // var p = this.getCartesianTilePosition(e)
+            var p = this.getCartesianTilePosition(e)
 
-            // if(!p) return;
+            //console.log("prev col: " + this.prevHighlightedTile.col)
+            //console.log("prev row: " + this.prevHighlightedTile.row)
 
-            // this.drawIso3DTile(p.x, p.y,
-            //                 -(this.VIEWPORT.x), -this.VIEWPORT.y,
-            //                 this.unselectedTile)
+            if (this.prevHighlightedTile.fillStyle != this.selectedTile.fillStyle && this.prevHighlightedTile.col != null && this.prevHighlightedTile.row != null) {
+                this.drawIsoTile(this.ctx, this.prevHighlightedTile.x, this.prevHighlightedTile.y,
+                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
+                             this.prevHighlightedTile.fillStyle)
+            }
+
+            this.prevHighlightedTile.col = p.col
+            this.prevHighlightedTile.row = p.row
+            this.prevHighlightedTile.x = p.x
+            this.prevHighlightedTile.y = p.y
+            this.prevHighlightedTile.fillStyle = this.getTileStyle(p.row, p.col)
+
+            if(!p) return;
+
+            this.drawIsoTile(this.ctx, p.x, p.y,
+                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
+                             this.highlightedTile)
 
         },
 

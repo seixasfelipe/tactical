@@ -403,6 +403,21 @@ var TACTICAL = (function(o) {
 
             var p = this.getCartesianTilePosition(e)
 
+            //console.log("prev col: " + this.prevHighlightedTile.col)
+            //console.log("prev row: " + this.prevHighlightedTile.row)
+
+            if (this.prevHighlightedTile.fillStyle != this.selectedTile.fillStyle && this.prevHighlightedTile.col != null && this.prevHighlightedTile.row != null) {
+                this.drawIsoTile(this.ctx, this.prevHighlightedTile.x, this.prevHighlightedTile.y,
+                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
+                             this.prevHighlightedTile.fillStyle)
+            }
+
+            this.prevHighlightedTile.col = p.col
+            this.prevHighlightedTile.row = p.row
+            this.prevHighlightedTile.x = p.x
+            this.prevHighlightedTile.y = p.y
+            this.prevHighlightedTile.fillStyle = this.getTileStyle(p.row, p.col)
+
             if(!p) return;
 
             this.drawIsoTile(this.ctx, p.x, p.y,

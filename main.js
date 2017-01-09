@@ -82,6 +82,22 @@ var TACTICAL = (function(o) {
             ]
         },
 
+        gameObjects: 
+        [
+            {
+                row: 4,
+                col: 10,
+                fillStyle: "rgb(0, 0, 255)",
+                strokeStyle: "rgb(0,0,0)"
+            },
+            {
+                row: 10,
+                col: 10,
+                fillStyle: "rgb(0, 255, 0)",
+                strokeStyle: "rgb(0,0,0)"
+            }
+        ],
+
         init: function(c, mm) {
 
             this.WIDTH   = c.width
@@ -169,6 +185,7 @@ var TACTICAL = (function(o) {
 
             this.drawMap(this.ctx)
             this.drawMiniMap(this.mm_ctx)
+            this.drawGameObjects(this.ctx)
         },
 
         drawMap: function(context) {
@@ -225,6 +242,18 @@ var TACTICAL = (function(o) {
                     tileSize)
                 
                 currentColumn += 1
+            }
+        },
+
+        drawGameObjects: function(context) {
+            var o
+            for(var i=0; i < this.gameObjects.length; i += 1) {
+                o = this.gameObjects[i]
+                this.drawIsoTile(context, o.col * this.TILE_SIZE,
+                    o.row * this.TILE_SIZE,
+                    -(this.VIEWPORT.x),
+                    -(this.VIEWPORT.y),
+                    o)
             }
         },
 

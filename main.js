@@ -183,6 +183,9 @@ var TACTICAL = (function(o) {
 
         draw: function() {
 
+            this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+            this.mm_ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
+
             this.drawMap(this.ctx)
             this.drawMiniMap(this.mm_ctx)
             this.drawGameObjects(this.ctx)
@@ -292,9 +295,6 @@ var TACTICAL = (function(o) {
             if( (this.VIEWPORT.y - this.VIEWPORT.height) > this.VIEWPORT.maxX) {
                 this.VIEWPORT.y = this.VIEWPORT.maxX
             }
-
-            this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
-            this.mm_ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
             
             console.log('viewport: ' + this.VIEWPORT.x + ', ' + this.VIEWPORT.y)
             
@@ -423,9 +423,7 @@ var TACTICAL = (function(o) {
 
             console.log(style)
 
-            this.drawIsoTile(this.ctx, p.x, p.y,
-                            -(this.VIEWPORT.x), -this.VIEWPORT.y,
-                            style)
+            this.draw()
         },
 
         highlightIsoTile: function(e) {

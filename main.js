@@ -162,7 +162,6 @@ var TACTICAL = (function(o) {
             })
 
             this.draw()
-
         },
 
         isometricToCartesian2D : function(p) {
@@ -407,13 +406,13 @@ var TACTICAL = (function(o) {
         },
 
         getCartesianTilePosition(e) {
-            console.log('screen point: ' + e.x + ', ' + e.y)
+            // console.log('screen point: ' + e.x + ', ' + e.y)
 
             var isoPoint = { x: this.VIEWPORT.x + e.x, y: this.VIEWPORT.y + e.y }
             var cartPoint = this.isometricToCartesian2D(isoPoint)
 
-            console.log('iso point: ' + isoPoint.x + ', ' + isoPoint.y)
-            console.log('cart point: ' + cartPoint.x + ', ' + cartPoint.y)
+            // console.log('iso point: ' + isoPoint.x + ', ' + isoPoint.y)
+            // console.log('cart point: ' + cartPoint.x + ', ' + cartPoint.y)
 
             if(cartPoint.x < 0 || cartPoint.y < 0)
                 return;
@@ -421,7 +420,7 @@ var TACTICAL = (function(o) {
             var row = parseInt(cartPoint.y / this.TILE_SIZE, 10), 
                 col = parseInt(cartPoint.x / this.TILE_SIZE, 10)
 
-            console.log('row: ' + row + ', col: ' + col)
+            // console.log('row: ' + row + ', col: ' + col)
 
             if(row < 0 || col < 0 || row >= this.ROWS || col >= this.COLS)
                 return;

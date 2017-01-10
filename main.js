@@ -470,13 +470,13 @@ var TACTICAL = (function(o) {
                              this.prevHighlightedTile.fillStyle)
             }
 
+            if(!p) return;
+
             this.prevHighlightedTile.col = p.col
             this.prevHighlightedTile.row = p.row
             this.prevHighlightedTile.x = p.x
             this.prevHighlightedTile.y = p.y
             this.prevHighlightedTile.fillStyle = this.getTileStyle(p.row, p.col)
-
-            if(!p) return;
 
             this.drawIsoTile(this.ctx, p.x, p.y,
                              -(this.VIEWPORT.x), -this.VIEWPORT.y,

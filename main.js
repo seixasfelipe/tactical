@@ -252,11 +252,12 @@ var TACTICAL = (function(o) {
             var o
             for(var i=0; i < this.gameObjects.length; i += 1) {
                 o = this.gameObjects[i]
-                this.drawIsoTile(context, o.col * this.TILE_SIZE,
-                    o.row * this.TILE_SIZE,
+                this.drawIsoTile(context, o.col * this.TILE_SIZE + (this.TILE_SIZE / 4),
+                    o.row * this.TILE_SIZE + (this.TILE_SIZE / 4),
                     -(this.VIEWPORT.x),
                     -(this.VIEWPORT.y),
-                    o)
+                    o,
+                    (this.TILE_SIZE / 2))
             }
         },
 

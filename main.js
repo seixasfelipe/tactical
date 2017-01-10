@@ -161,6 +161,13 @@ var TACTICAL = (function(o) {
                 }                
             })
 
+            this.gameLoop()
+        },
+
+        gameLoop: function() {
+            
+            window.requestAnimationFrame(this.gameLoop.bind(this))
+
             this.draw()
         },
 
@@ -299,8 +306,6 @@ var TACTICAL = (function(o) {
             }
             
             console.log('viewport: ' + this.VIEWPORT.x + ', ' + this.VIEWPORT.y)
-            
-            this.draw()
         },
 
         getGameObjectAt: function(row, col) {
@@ -452,8 +457,6 @@ var TACTICAL = (function(o) {
                 this.selectedTile.row = p.row
                 this.selectedTile.col = p.col
             }
-
-            this.draw()
         },
 
         highlightIsoTile: function(e) {

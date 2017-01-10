@@ -85,12 +85,14 @@ var TACTICAL = (function(o) {
         gameObjects: 
         [
             {
+                id: 1,
                 row: 4,
                 col: 10,
                 fillStyle: "rgb(0, 0, 255)",
                 strokeStyle: "rgb(0,0,0)"
             },
             {
+                id: 2,
                 row: 10,
                 col: 10,
                 fillStyle: "rgb(0, 255, 0)",
@@ -302,6 +304,27 @@ var TACTICAL = (function(o) {
             this.draw()
         },
 
+        getGameObjectAt: function(row, col) {
+            var o = null
+            for(var i=0; i < this.gameObjects.length; i += 1) {
+                if(this.gameObjects[i].row === row && this.gameObjects[i].col === col) {
+                    return this.gameObjects[i]
+                }
+            }
+            return o
+        },
+
+        moveGameObject: function(id, toRow, toCol) {
+            console.log('moving game object to ' + toRow + ', ' + toCol)
+            for(var i=0; i < this.gameObjects.length; i += 1) {
+                if(this.gameObjects[i].id === id) {
+                    this.gameObjects[i].row = toRow
+                    this.gameObjects[i].col = toCol
+                    break;
+                }
+            }
+        },
+
         drawIsoTile: function(context, upperLeftX, upperLeftY, offsetX, offsetY, style, tileSize) {
 
             context.fillStyle = style.fillStyle
@@ -411,18 +434,25 @@ var TACTICAL = (function(o) {
             }
         },
 
-        selectIsoTile: function(e, style) {
+        selectIsoTile: function(e) {
 
-            var p = this.getCartesianTilePosition(e)
+            var p = this.getCartesianTilePosition(e),
+                o
 
             if(!p) return;
 
-            style = style || this.selectedTile
-            
-            style.row = p.row
-            style.col = p.col
+            o = this.getGameObjectAt(this.selectedTile.row, this.selectedTile.col)
+            if(o &&
+                (p.row !== o.row || p.col !== o.col)) {
 
-            console.log(style)
+                this.moveGameObject(o.id, p.row, p.col)
+
+                this.selectedTile.row = null
+                this.selectedTile.col = null
+            } else {
+                this.selectedTile.row = p.row
+                this.selectedTile.col = p.col
+            }
 
             this.draw()
         },

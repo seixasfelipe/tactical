@@ -118,6 +118,10 @@ var TACTICAL = (function(o) {
                 height: c.height 
             }
 
+            this.FPS    = 25                // frames per second
+            this.TICK   = 1000 / this.FPS   // how much time 1 frame take
+            this.lastCurrentTime    = new Date().getTime()
+
             c.setAttribute('style', 'position:absolute; top:0px; left:0px; z-index:0')
 
             var mmY = Math.floor(this.HEIGHT) - this.HEIGHT / 4
@@ -166,9 +170,15 @@ var TACTICAL = (function(o) {
 
         gameLoop: function() {
             
-            window.requestAnimationFrame(this.gameLoop.bind(this))
+            var currentTime = new Date().getTime()
+            var elapsedTime = currentTime - this.lastCurrentTime
+            
+            if(elapsedTime > this.TICK) {
+                this.draw()
+                this.lastCurrentTime = currentTime
+            }
 
-            this.draw()
+            window.requestAnimationFrame(this.gameLoop.bind(this))
         },
 
         isometricToCartesian2D : function(p) {
@@ -190,6 +200,8 @@ var TACTICAL = (function(o) {
         },
 
         draw: function() {
+
+            console.log('draw called')
 
             this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)
             this.mm_ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT)

@@ -34,13 +34,6 @@ var TACTICAL = (function(o) {
             fillStyle: "rgb(220,220,220)",
             strokeStyle: "rgb(0,0,0)"
         },
-        prevHighlightedTile: {
-            row: null,
-            col: null,
-            x: null,
-            y: null,
-            fillStyle: null
-        },
         terrainTile: {
             fillStyle: "rgb(143, 120, 78)",
             strokeStyle: "rgb(0,0,0)"  
@@ -286,6 +279,9 @@ var TACTICAL = (function(o) {
             if(this.selectedTile.row === row && this.selectedTile.col === col) {
                 style = this.selectedTile
             }
+            else if(this.highlightedTile.row === row && this.highlightedTile.col === col) {
+                style = this.highlightedTile
+            }
             else if(this.map.data[(row * this.COLS) + col] === 1) {
                 style = this.terrainTile
             }
@@ -475,27 +471,10 @@ var TACTICAL = (function(o) {
 
             var p = this.getCartesianTilePosition(e)
 
-            //console.log("prev col: " + this.prevHighlightedTile.col)
-            //console.log("prev row: " + this.prevHighlightedTile.row)
-
-            if (this.prevHighlightedTile.fillStyle != this.selectedTile.fillStyle && this.prevHighlightedTile.col != null && this.prevHighlightedTile.row != null) {
-                this.drawIsoTile(this.ctx, this.prevHighlightedTile.x, this.prevHighlightedTile.y,
-                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
-                             this.prevHighlightedTile.fillStyle)
-            }
-
             if(!p) return;
 
-            this.prevHighlightedTile.col = p.col
-            this.prevHighlightedTile.row = p.row
-            this.prevHighlightedTile.x = p.x
-            this.prevHighlightedTile.y = p.y
-            this.prevHighlightedTile.fillStyle = this.getTileStyle(p.row, p.col)
-
-            this.drawIsoTile(this.ctx, p.x, p.y,
-                             -(this.VIEWPORT.x), -this.VIEWPORT.y,
-                             this.highlightedTile)
-
+            this.highlightedTile.row = p.row
+            this.highlightedTile.col = p.col
         },
 
         drawTile: function(context, row, col, fillStyle, strokeStyle) {

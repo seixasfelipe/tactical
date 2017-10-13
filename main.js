@@ -418,7 +418,7 @@ var TACTICAL = (function(o) {
 
         },
 
-        getCartesianTilePosition(e) {
+        getCartesianTilePosition: function(e) {
             // console.log('screen point: ' + e.x + ', ' + e.y)
 
             var isoPoint = { x: this.VIEWPORT.x + e.x, y: this.VIEWPORT.y + e.y }
